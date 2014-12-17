@@ -1,8 +1,32 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <sys/types.h>
+#include <unistd.h>
+#include <signal.h>
+
+
 
 int main(int argc, char **  argv)
 {
+    /* This part of the code creates the daemon */
+    pid_t pID = fork();
+    if(pID == -1)
+    {
+        fprintf(stderr, "Failed to fork in the first place");
+        return 1;
+    }
+    else if(pID != 0)
+    {
+        exit(0);
+    }
+
+    if(setsid() == -1)
+    {
+        fprintf(stderr, "Failed to start a new session");
+        return 1;
+    }
+
+
     FILE * current_power, * full_power;
     char * temp_cmd;
     int i = 0;
