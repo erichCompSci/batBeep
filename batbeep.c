@@ -6,6 +6,7 @@
 #include <unistd.h>
 #include <signal.h>
 #include <syslog.h>
+#include <string.h>
 
 
 int main(int argc, char **  argv)
@@ -72,37 +73,53 @@ int main(int argc, char **  argv)
         return 1;
 
 
-    FILE * current_power, * full_power;
+    FILE * current_power, * full_power, * power_status;
     char * temp_cmd;
-    int i = 0;
     temp_cmd = "aplay -q ~/Sounds/beep-06.wav";
     
 
-    while (i < 30)
+    while (1)
     {
         if(!(current_power = fopen("/sys/class/power_supply/BAT1/charge_now", "r")))
         {
             syslog(LOG_ERR, "Error in opening current_power file");
+            system(temp_cmd);
             return 1;
         }
 
         if(!(full_power = fopen("/sys/class/power_supply/BAT1/charge_full", "r")))
         {
             syslog(LOG_ERR, "Error in opening full_power file");
+            system(temp_cmd);
+            return 1;
+        }
+
+        if(!(power_status = fopen("/sys/class/power_supply/BAT1/status", "r")))
+        {
+            syslog(LOG_ERR, "Error in opening status file");
+            system(temp_cmd);
             return 1;
         }
 
         unsigned int current, full;
+        char status_string[15];
+        
+
+        current = full = 1;
+
         if(!fscanf(current_power, "%u", &current))
         {
             syslog(LOG_ERR, "Error in reading current_power file");
-            return 1;
         }
         
         if(!fscanf(full_power, "%u", &full))
         {
             syslog(LOG_ERR, "Error in reading full_power file");
-            return 1;
+        }
+
+        if(!fscanf(power_status, "%s", status_string))
+        {
+            syslog(LOG_ERR, "Error in reading status file");
         }
 
         if(current > full)
@@ -110,6 +127,7 @@ int main(int argc, char **  argv)
             syslog(LOG_ERR, "Runtime error: Current charge greater than Max Capacity");
             return 1;
         } 
+
 #ifdef DEBUG
         printf("Current: %u\n", current);
         printf("Full: %u\n", full);
@@ -119,18 +137,16 @@ int main(int argc, char **  argv)
         printf("\n%f\n", percentage);
 #endif
 
-        if(percentage > (float) 0.8005 || percentage < (float) 0.3995)
+        if((percentage > (float) 0.8005 && !strcmp(status_string, "Charging")) || 
+                                        (percentage < (float) 0.3995 && !strcmp(status_string, "Discharging")))
         {
             system(temp_cmd);
         }
 
-        syslog(LOG_DEBUG, "Still Working....");
-        sleep(1);
+        sleep(5);
         fclose(full_power);
         fclose(current_power);
 
-        
-        ++i;
     }
 
         
