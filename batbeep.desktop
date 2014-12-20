@@ -6,5 +6,5 @@ NoDisplay=false
 X-GNOME-Autostart-enabled=true
 Name[en_US]=batbeep
 Name=batbeep
-Comment[en_US]=for battery test
-Comment=for battery test
+Comment[en_US]=Battery beep daemon 
+Comment=Battery beep daemon 
