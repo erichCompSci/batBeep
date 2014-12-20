@@ -7,4 +7,3 @@ This is a daemon I'm creating for Linux machines.  It'll beep when the power sup
 To make the file run make or make all.
 To clean run the make clean.
 
-TODO: I need to create a make install and figure out how to get the program to run automatically at startup.  
