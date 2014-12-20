@@ -1,0 +1,10 @@
+[Desktop Entry]
+Type=Application
+Exec=batbeep
+Hidden=false
+NoDisplay=false
+X-GNOME-Autostart-enabled=true
+Name[en_US]=batbeep
+Name=batbeep
+Comment[en_US]=for battery test
+Comment=for battery test

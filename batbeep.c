@@ -103,6 +103,7 @@ int main(int argc, char **  argv)
 
         unsigned int current, full;
         char status_string[15];
+        int beeped = 0;
         
 
         current = full = 1;
@@ -141,6 +142,7 @@ int main(int argc, char **  argv)
                                         (percentage < (float) 0.3995 && !strcmp(status_string, "Discharging")))
         {
             system(temp_cmd);
+            syslog(LOG_DEBUG, "The percentage is: %f", percentage);
         }
 
         sleep(5);
