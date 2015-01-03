@@ -148,6 +148,7 @@ int main(int argc, char **  argv)
         sleep(5);
         fclose(full_power);
         fclose(current_power);
+        fclose(power_status);
 
     }
 
